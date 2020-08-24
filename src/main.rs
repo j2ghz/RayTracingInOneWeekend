@@ -1,17 +1,16 @@
 use image::{ImageBuffer, ImageFormat, RgbImage};
-use num::Float;
 use raytracing_in_one_weekend::{color::Rgb, ray::Ray, vec3d::Vec3d};
 
-fn hit_sphere<F: Float + std::ops::MulAssign>(center: Vec3d<F>, radius: F, r: Ray<F>) -> bool {
+fn hit_sphere(center: Vec3d, radius: f64, r: Ray) -> bool {
     let oc = r.origin() - center;
     let a = r.direction().dot(r.direction());
-    let b = oc.dot(r.direction()) * (F::one() + F::one());
+    let b = oc.dot(r.direction()) * 2.0;
     let c = oc.dot(oc) - radius * radius;
-    let discriminant: F = b * b - a * c * (F::from(4).unwrap());
-    discriminant > F::zero()
+    let discriminant = b * b - a * c * 4.0;
+    discriminant > 0.0
 }
 
-fn color(r: Ray<f64>) -> Rgb<f64> {
+fn color(r: Ray) -> Rgb {
     if hit_sphere(Vec3d::new(0.0, 0.0, -1.0), 0.5, r) {
         Rgb::new(1.0, 0.0, 0.0)
     } else {
@@ -41,7 +40,7 @@ fn main() {
             );
 
             let color = color(ray);
-            let y = (h-1)-j;
+            let y = (h - 1) - j;
             let x = i;
             //println!("x:{} y:{} color:{:?}",x,y,color);
             img.put_pixel(x, y, color.into());

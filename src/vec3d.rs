@@ -1,24 +1,24 @@
-use num::Float;
+
 use std::ops::Add;
 
 #[derive(Clone, Copy, Debug)]
-pub struct Vec3d<F: Float> {
-    x: F,
-    y: F,
-    z: F,
+pub struct Vec3d {
+    x: f64,
+    y: f64,
+    z: f64,
 }
 
-impl<F: Float + std::ops::MulAssign> Vec3d<F> {
-    pub fn new(x: F, y: F, z: F) -> Self {
+impl Vec3d {
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
         Vec3d { x, y, z }
     }
-    pub fn x(self) -> F {
+    pub fn x(self) -> f64 {
         self.x
     }
-    pub fn y(self) -> F {
+    pub fn y(self) -> f64 {
         self.y
     }
-    pub fn z(self) -> F {
+    pub fn z(self) -> f64 {
         self.z
     }
     pub fn make_unit_vector(&mut self) {
@@ -29,7 +29,7 @@ impl<F: Float + std::ops::MulAssign> Vec3d<F> {
         self.y *= ratio;
         self.z *= ratio;
     }
-    pub fn dot(self, other: Self) -> F {
+    pub fn dot(self, other: Self) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
     fn cross(self, other: Self) -> Self {
@@ -44,15 +44,15 @@ impl<F: Float + std::ops::MulAssign> Vec3d<F> {
     pub fn unit_vector(self) -> Self {
         self / self.length()
     }
-    fn length_squared(self) -> F {
+    fn length_squared(self) -> f64 {
         (self.x.powi(2) + self.y.powi(2) + self.y.powi(2))
     }
-    fn length(self) -> F {
+    fn length(self) -> f64 {
         self.length_squared().sqrt()
     }
 }
 
-impl<F: Float> Add for Vec3d<F> {
+impl Add for Vec3d {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         Vec3d {
@@ -63,7 +63,7 @@ impl<F: Float> Add for Vec3d<F> {
     }
 }
 
-impl<F: Float> std::ops::Sub for Vec3d<F> {
+impl std::ops::Sub for Vec3d {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Vec3d {
@@ -73,7 +73,7 @@ impl<F: Float> std::ops::Sub for Vec3d<F> {
         }
     }
 }
-impl<F: Float> std::ops::Mul for Vec3d<F> {
+impl std::ops::Mul for Vec3d {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
         Vec3d {
@@ -83,7 +83,7 @@ impl<F: Float> std::ops::Mul for Vec3d<F> {
         }
     }
 }
-impl<F: Float> std::ops::Div for Vec3d<F> {
+impl std::ops::Div for Vec3d {
     type Output = Self;
     fn div(self, rhs: Self) -> Self::Output {
         Vec3d {
@@ -93,9 +93,9 @@ impl<F: Float> std::ops::Div for Vec3d<F> {
         }
     }
 }
-impl<F: Float> std::ops::Mul<F> for Vec3d<F> {
+impl std::ops::Mul<f64> for Vec3d {
     type Output = Self;
-    fn mul(self, f: F) -> Self::Output {
+    fn mul(self, f: f64) -> Self::Output {
         Vec3d {
             x: self.x * f,
             y: self.y * f,
@@ -103,9 +103,9 @@ impl<F: Float> std::ops::Mul<F> for Vec3d<F> {
         }
     }
 }
-impl<F: Float> std::ops::Div<F> for Vec3d<F> {
+impl std::ops::Div<f64> for Vec3d {
     type Output = Self;
-    fn div(self, f: F) -> Self::Output {
+    fn div(self, f: f64) -> Self::Output {
         Vec3d {
             x: self.x / f,
             y: self.y / f,
@@ -113,43 +113,43 @@ impl<F: Float> std::ops::Div<F> for Vec3d<F> {
         }
     }
 }
-impl<F: Float + std::ops::AddAssign> std::ops::AddAssign for Vec3d<F> {
+impl std::ops::AddAssign for Vec3d {
     fn add_assign(&mut self, rhs: Self) {
         self.x += rhs.x;
         self.y += rhs.y;
         self.z += rhs.z;
     }
 }
-impl<F: Float + std::ops::SubAssign> std::ops::SubAssign for Vec3d<F> {
+impl std::ops::SubAssign for Vec3d {
     fn sub_assign(&mut self, rhs: Self) {
         self.x -= rhs.x;
         self.y -= rhs.y;
         self.z -= rhs.z;
     }
 }
-impl<F: Float + std::ops::MulAssign> std::ops::MulAssign for Vec3d<F> {
+impl std::ops::MulAssign for Vec3d {
     fn mul_assign(&mut self, rhs: Self) {
         self.x *= rhs.x;
         self.y *= rhs.y;
         self.z *= rhs.z;
     }
 }
-impl<F: Float + std::ops::DivAssign> std::ops::DivAssign for Vec3d<F> {
+impl std::ops::DivAssign for Vec3d {
     fn div_assign(&mut self, rhs: Self) {
         self.x /= rhs.x;
         self.y /= rhs.y;
         self.z /= rhs.z;
     }
 }
-impl<F: Float + std::ops::MulAssign> std::ops::MulAssign<F> for Vec3d<F> {
-    fn mul_assign(&mut self, f: F) {
+impl std::ops::MulAssign<f64> for Vec3d {
+    fn mul_assign(&mut self, f: f64) {
         self.x *= f;
         self.y *= f;
         self.z *= f;
     }
 }
-impl<F: Float + std::ops::DivAssign> std::ops::DivAssign<F> for Vec3d<F> {
-    fn div_assign(&mut self, f: F) {
+impl std::ops::DivAssign<f64> for Vec3d {
+    fn div_assign(&mut self, f: f64) {
         self.x /= f;
         self.y /= f;
         self.z /= f;

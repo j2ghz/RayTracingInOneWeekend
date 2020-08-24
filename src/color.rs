@@ -1,20 +1,18 @@
-use num::Float;
-
 #[derive(Clone, Copy, Debug)]
-pub struct Rgb<F: Float> {
-    r: F,
-    g: F,
-    b: F,
+pub struct Rgb {
+    r: f64,
+    g: f64,
+    b: f64,
 }
 
-impl<F: Float> Rgb<F> {
-    pub fn new(r: F, g: F, b: F) -> Rgb<F> {
-        debug_assert!(r >= F::zero());
-        debug_assert!(r <= F::one());
-        debug_assert!(g >= F::zero());
-        debug_assert!(g <= F::one());
-        debug_assert!(b >= F::zero());
-        debug_assert!(b <= F::one());
+impl Rgb {
+    pub fn new(r: f64, g: f64, b: f64) -> Rgb {
+        debug_assert!(r >= 0.0);
+        debug_assert!(r <= 1.0);
+        debug_assert!(g >= 0.0);
+        debug_assert!(g <= 1.0);
+        debug_assert!(b >= 0.0);
+        debug_assert!(b <= 1.0);
         Rgb { r, g, b }
     }
 
@@ -23,11 +21,11 @@ impl<F: Float> Rgb<F> {
     }
 }
 
-fn rescale<F: Float>(float: F) -> u8 {
-    num::cast((float * F::from(255).unwrap()).round()).unwrap()
+fn rescale(float: f64) -> u8 {
+    (float * 255.0).round() as u8
 }
 
-impl<F: Float> Into<image::Rgb<u8>> for Rgb<F> {
+impl Into<image::Rgb<u8>> for Rgb {
     fn into(self) -> image::Rgb<u8> {
         self.as_color()
     }
@@ -39,11 +37,8 @@ mod tests {
 
     #[test]
     fn rescale_examples() {
-        assert_eq!(rescale(0f32), 0);
         assert_eq!(rescale(0f64), 0);
-        assert_eq!(rescale(1f32), 255);
         assert_eq!(rescale(1f64), 255);
-        assert_eq!(rescale(0.5f32), 128);
         assert_eq!(rescale(0.5f64), 128);
     }
 
