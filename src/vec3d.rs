@@ -1,7 +1,6 @@
 use num::Float;
 use std::ops::Add;
 
-
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3d<F: Float> {
     x: F,
@@ -10,7 +9,19 @@ pub struct Vec3d<F: Float> {
 }
 
 impl<F: Float + std::ops::MulAssign> Vec3d<F> {
-    fn make_unit_vector(&mut self) {
+    pub fn new(x: F, y: F, z: F) -> Self {
+        Vec3d { x, y, z }
+    }
+    pub fn x(self) -> F {
+        self.x
+    }
+    pub fn y(self) -> F {
+        self.y
+    }
+    pub fn z(self) -> F {
+        self.z
+    }
+    pub fn make_unit_vector(&mut self) {
         let ratio = (self.x.powi(2) + self.y.powi(2) + self.y.powi(2))
             .sqrt()
             .recip();
@@ -18,10 +29,10 @@ impl<F: Float + std::ops::MulAssign> Vec3d<F> {
         self.y *= ratio;
         self.z *= ratio;
     }
-    fn dot(self, other: Vec3d<F>) -> F {
+    pub fn dot(self, other: Self) -> F {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
-    fn cross(self, other: Vec3d<F>) -> Vec3d<F> {
+    fn cross(self, other: Self) -> Self {
         let a = self;
         let b = other;
         Vec3d {
@@ -30,10 +41,10 @@ impl<F: Float + std::ops::MulAssign> Vec3d<F> {
             z: a.x * b.y - a.y * b.x,
         }
     }
-    fn unit_vector(self) -> Vec3d<F>{
+    pub fn unit_vector(self) -> Self {
         self / self.length()
     }
-    fn length_squared(self) -> F{
+    fn length_squared(self) -> F {
         (self.x.powi(2) + self.y.powi(2) + self.y.powi(2))
     }
     fn length(self) -> F {
@@ -42,7 +53,7 @@ impl<F: Float + std::ops::MulAssign> Vec3d<F> {
 }
 
 impl<F: Float> Add for Vec3d<F> {
-    type Output = Vec3d<F>;
+    type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         Vec3d {
             x: self.x + rhs.x,
@@ -53,7 +64,7 @@ impl<F: Float> Add for Vec3d<F> {
 }
 
 impl<F: Float> std::ops::Sub for Vec3d<F> {
-    type Output = Vec3d<F>;
+    type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Vec3d {
             x: self.x - rhs.x,
@@ -63,7 +74,7 @@ impl<F: Float> std::ops::Sub for Vec3d<F> {
     }
 }
 impl<F: Float> std::ops::Mul for Vec3d<F> {
-    type Output = Vec3d<F>;
+    type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
         Vec3d {
             x: self.x * rhs.x,
@@ -73,7 +84,7 @@ impl<F: Float> std::ops::Mul for Vec3d<F> {
     }
 }
 impl<F: Float> std::ops::Div for Vec3d<F> {
-    type Output = Vec3d<F>;
+    type Output = Self;
     fn div(self, rhs: Self) -> Self::Output {
         Vec3d {
             x: self.x / rhs.x,
@@ -83,7 +94,7 @@ impl<F: Float> std::ops::Div for Vec3d<F> {
     }
 }
 impl<F: Float> std::ops::Mul<F> for Vec3d<F> {
-    type Output = Vec3d<F>;
+    type Output = Self;
     fn mul(self, f: F) -> Self::Output {
         Vec3d {
             x: self.x * f,
@@ -93,7 +104,7 @@ impl<F: Float> std::ops::Mul<F> for Vec3d<F> {
     }
 }
 impl<F: Float> std::ops::Div<F> for Vec3d<F> {
-    type Output = Vec3d<F>;
+    type Output = Self;
     fn div(self, f: F) -> Self::Output {
         Vec3d {
             x: self.x / f,

@@ -1,5 +1,6 @@
 use num::Float;
 
+#[derive(Clone, Copy, Debug)]
 pub struct Rgb<F: Float> {
     r: F,
     g: F,
@@ -53,5 +54,9 @@ mod tests {
     #[test]
     fn color_fffffff() {
         assert_eq!(Rgb::new(1f64, 1f64, 1f64).as_color().0, [255, 255, 255]);
+    }
+    #[test]
+    fn color_ff0000() {
+        assert_eq!(Rgb::new(1f64, 0f64, 0f64).as_color().0, [255, 0, 0]);
     }
 }
