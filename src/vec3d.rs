@@ -1,4 +1,3 @@
-
 use std::ops::Add;
 
 #[derive(Clone, Copy, Debug)]
@@ -31,6 +30,9 @@ impl Vec3d {
     }
     pub fn dot(self, other: Self) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
+    }
+    pub fn dot_with_self(self) -> f64 {
+        self.dot(self)
     }
     fn cross(self, other: Self) -> Self {
         let a = self;

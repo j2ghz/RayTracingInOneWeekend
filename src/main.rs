@@ -1,5 +1,10 @@
 use image::{ImageBuffer, ImageFormat, RgbImage};
-use raytracing_in_one_weekend::{color::Rgb, ray::Ray, vec3d::Vec3d};
+use raytracing_in_one_weekend::{
+    color::Rgb,
+    geometry::{get_hits, Hitable},
+    ray::Ray,
+    vec3d::Vec3d,
+};
 
 fn hit_sphere(center: Vec3d, radius: f64, r: Ray) -> Option<f64> {
     let oc = r.origin() - center;
@@ -14,9 +19,9 @@ fn hit_sphere(center: Vec3d, radius: f64, r: Ray) -> Option<f64> {
     }
 }
 
-fn color(r: Ray) -> Rgb {
-    if let Some(t) = hit_sphere(Vec3d::new(0.0, 0.0, -1.0), 0.5, r) {
-        let normal = (r.point_at_parameter(t) - Vec3d::new(0.0, 0.0, -1.0)).unit_vector();
+fn color(r: Ray, hitable: &Vec<Box<dyn Hitable>>) -> Rgb {
+    if let Some(t) = get_hits(hitable, r, 0.0, std::f64::MAX) {
+        let normal = t.normal;
         Rgb::new(
             (normal.x() + 1.0) * 0.5,
             (normal.y() + 1.0) * 0.5,
@@ -40,6 +45,17 @@ fn main() {
     let vertical_size = Vec3d::new(0.0, 2.0, 0.0);
     let origin = Vec3d::new(0.0, 0.0, 0.0);
 
+    let objects: Vec<Box<dyn Hitable>> = vec![
+        Box::new(raytracing_in_one_weekend::geometry::sphere::Sphere {
+            center: Vec3d::new(0.0, 0.0, -1.0),
+            radius: 0.5,
+        }),
+        Box::new(raytracing_in_one_weekend::geometry::sphere::Sphere {
+            center: Vec3d::new(0.0, -100.5, -1.0),
+            radius: 100.0,
+        }),
+    ];
+
     for j in (0..(h - 1)).rev() {
         for i in 0..(w - 1) {
             let u = i as f64 / w as f64;
@@ -49,7 +65,7 @@ fn main() {
                 lower_left_corner + horizontal_size * u + vertical_size * v,
             );
 
-            let color = color(ray);
+            let color = color(ray, &objects);
             let y = (h - 1) - j;
             let x = i;
             //println!("x:{} y:{} color:{:?}",x,y,color);
