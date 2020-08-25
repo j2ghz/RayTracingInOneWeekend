@@ -1,21 +1,31 @@
 use image::{ImageBuffer, ImageFormat, RgbImage};
 use raytracing_in_one_weekend::{color::Rgb, ray::Ray, vec3d::Vec3d};
 
-fn hit_sphere(center: Vec3d, radius: f64, r: Ray) -> bool {
+fn hit_sphere(center: Vec3d, radius: f64, r: Ray) -> Option<f64> {
     let oc = r.origin() - center;
     let a = r.direction().dot(r.direction());
     let b = oc.dot(r.direction()) * 2.0;
     let c = oc.dot(oc) - radius * radius;
     let discriminant = b * b - a * c * 4.0;
-    discriminant > 0.0
+    if discriminant < 0.0 {
+        None
+    } else {
+        Some(-b - discriminant.sqrt() / 2.0 * a)
+    }
 }
 
 fn color(r: Ray) -> Rgb {
-    if hit_sphere(Vec3d::new(0.0, 0.0, -1.0), 0.5, r) {
-        Rgb::new(1.0, 0.0, 0.0)
+    if let Some(t) = hit_sphere(Vec3d::new(0.0, 0.0, -1.0), 0.5, r) {
+        let normal = (r.point_at_parameter(t) - Vec3d::new(0.0, 0.0, -1.0)).unit_vector();
+        Rgb::new(
+            (normal.x() + 1.0) * 0.5,
+            (normal.y() + 1.0) * 0.5,
+            (normal.z() + 1.0) * 0.5,
+        )
     } else {
-        //let t = (r.direction().unit_vector().y() + 1.0) * 0.5;
-        Rgb::new(0.9, 0.9, 0.9)
+        let unit_direction = r.direction().unit_vector();
+        let t = (unit_direction.y() + 1.0) * 0.5;
+        Rgb::new(t, t, t)
     }
 }
 
