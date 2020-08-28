@@ -11,7 +11,7 @@ impl Rgb {
         debug_assert!(r <= 1.0);
         debug_assert!(g >= 0.0);
         debug_assert!(g <= 1.0);
-        debug_assert!(b >= 0.0,"b: {}",b);
+        debug_assert!(b >= 0.0, "b: {}", b);
         debug_assert!(b <= 1.0);
         Rgb { r, g, b }
     }

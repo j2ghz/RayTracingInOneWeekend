@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
 fn power_impls(c: &mut Criterion) {
     let mut group = c.benchmark_group("power_impls");
@@ -8,11 +8,11 @@ fn power_impls(c: &mut Criterion) {
             let i = **i;
             b.iter(|| black_box(f.powi(i)))
         });
-        group.bench_with_input(BenchmarkId::new("powf", i), &(f, i), |b, (f, i)| {
+        group.bench_with_input(BenchmarkId::new("powf", i), &(f, i), |b, (f, _i)| {
             let f = *f;
             b.iter(|| black_box(f.powf(f)))
         });
-        group.bench_with_input(BenchmarkId::new("mul", i), &(f, i), |b, (f, i)| {
+        group.bench_with_input(BenchmarkId::new("mul", i), &(f, i), |b, (f, _i)| {
             b.iter(|| black_box(f * f))
         });
     }
