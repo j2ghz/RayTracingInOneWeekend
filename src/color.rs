@@ -1,3 +1,5 @@
+use std::ops::{AddAssign, Div};
+
 #[derive(Clone, Copy, Debug)]
 pub struct Rgb {
     r: f64,
@@ -28,6 +30,22 @@ fn rescale(float: f64) -> u8 {
 impl Into<image::Rgb<u8>> for Rgb {
     fn into(self) -> image::Rgb<u8> {
         self.as_color()
+    }
+}
+
+impl AddAssign for Rgb {
+    fn add_assign(&mut self, rhs: Self) {
+        self.r += rhs.r;
+        self.g += rhs.g;
+        self.b += rhs.b;
+    }
+}
+
+impl Div<f64> for Rgb {
+    type Output = Rgb;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        Rgb::new(self.r / rhs, self.g / rhs, self.b / rhs)
     }
 }
 

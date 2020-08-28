@@ -1,4 +1,5 @@
 use image::{ImageBuffer, ImageFormat, RgbImage};
+use rand::Rng;
 use raytracing_in_one_weekend::{
     camera::Camera,
     color::Rgb,
@@ -6,6 +7,7 @@ use raytracing_in_one_weekend::{
     ray::Ray,
     vec3d::Vec3d,
 };
+use std::time::Instant;
 
 fn hit_sphere(center: Vec3d, radius: f64, r: Ray) -> Option<f64> {
     let oc = r.origin() - center;
@@ -20,7 +22,7 @@ fn hit_sphere(center: Vec3d, radius: f64, r: Ray) -> Option<f64> {
     }
 }
 
-fn color(r: Ray, hitable: &Vec<Box<dyn Hitable>>) -> Rgb {
+fn get_color(r: Ray, hitable: &Vec<Box<dyn Hitable>>) -> Rgb {
     if let Some(t) = get_hits(hitable, r, 0.0, std::f64::MAX) {
         let normal = t.normal;
         Rgb::new(
@@ -36,9 +38,10 @@ fn color(r: Ray, hitable: &Vec<Box<dyn Hitable>>) -> Rgb {
 }
 
 fn main() {
-    println!("Hello, world!");
+    let start = Instant::now();
     let w = 200;
     let h = 100;
+    let samples = 100;
     let mut img: RgbImage = ImageBuffer::new(w, h);
 
     let cam = Camera::default();
@@ -53,20 +56,28 @@ fn main() {
             radius: 100.0,
         }),
     ];
-
+    let mut rng = rand::thread_rng();
     for j in (0..(h - 1)).rev() {
         for i in 0..(w - 1) {
-            let u = i as f64 / w as f64;
-            let v = j as f64 / h as f64;
-            let ray = cam.get_ray(u, v);
+            let mut color = Rgb::new(0.0, 0.0, 0.0);
+            for _ in 0..samples {
+                let u = (i as f64 + rng.gen::<f64>()) / w as f64;
+                let v = (j as f64 + rng.gen::<f64>()) / h as f64;
+                let ray = cam.get_ray(u, v);
 
-            let color = color(ray, &objects);
+                color += get_color(ray, &objects);
+            }
+            let color = color / samples as f64;
             let y = (h - 1) - j;
             let x = i;
             //println!("x:{} y:{} color:{:?}",x,y,color);
             img.put_pixel(x, y, color.into());
         }
     }
+
+    let duration = start.elapsed();
+    println!("Rendered in: {:?}", duration);
+
     img.save_with_format("./target/out.bmp", ImageFormat::Bmp)
         .expect("Couldn't save image");
 }
