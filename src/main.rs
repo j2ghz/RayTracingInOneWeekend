@@ -33,7 +33,7 @@ fn get_color(r: Ray, hitable: &Vec<Box<dyn Hitable>>) -> Rgb {
     } else {
         let unit_direction = r.direction().unit_vector();
         let t = (unit_direction.y() + 1.0) * 0.5;
-        Rgb::new(t, t, t)
+        Rgb::new(1.0, 1.0, 1.0).blend(Rgb::new(0.5, 0.7, 1.0), t)
     }
 }
 

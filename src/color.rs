@@ -1,4 +1,4 @@
-use std::ops::{AddAssign, Div};
+use std::ops::{Add, AddAssign, Div, Mul};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Rgb {
@@ -16,6 +16,10 @@ impl Rgb {
         debug_assert!(b >= 0.0, "b: {}", b);
         debug_assert!(b <= 1.0);
         Rgb { r, g, b }
+    }
+
+    pub fn blend(self, other: Rgb, ratio: f64) -> Rgb {
+        self * (1.0 - ratio) + other * ratio
     }
 
     pub fn as_color(self) -> image::Rgb<u8> {
@@ -41,11 +45,31 @@ impl AddAssign for Rgb {
     }
 }
 
+impl Add for Rgb {
+    fn add(self, rhs: Self) -> Self {
+        Self {
+            r: self.r + rhs.r,
+            g: self.g + rhs.g,
+            b: self.b + rhs.b,
+        }
+    }
+
+    type Output = Self;
+}
+
 impl Div<f64> for Rgb {
     type Output = Rgb;
 
     fn div(self, rhs: f64) -> Self::Output {
         Rgb::new(self.r / rhs, self.g / rhs, self.b / rhs)
+    }
+}
+
+impl Mul<f64> for Rgb {
+    type Output = Rgb;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Rgb::new(self.r * rhs, self.g * rhs, self.b * rhs)
     }
 }
 
