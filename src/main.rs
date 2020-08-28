@@ -1,5 +1,6 @@
 use image::{ImageBuffer, ImageFormat, RgbImage};
 use raytracing_in_one_weekend::{
+    camera::Camera,
     color::Rgb,
     geometry::{get_hits, Hitable},
     ray::Ray,
@@ -40,10 +41,7 @@ fn main() {
     let h = 100;
     let mut img: RgbImage = ImageBuffer::new(w, h);
 
-    let lower_left_corner = Vec3d::new(-2.0, -1.0, -1.0);
-    let horizontal_size = Vec3d::new(4.0, 0.0, 0.0);
-    let vertical_size = Vec3d::new(0.0, 2.0, 0.0);
-    let origin = Vec3d::new(0.0, 0.0, 0.0);
+    let cam = Camera::default();
 
     let objects: Vec<Box<dyn Hitable>> = vec![
         Box::new(raytracing_in_one_weekend::geometry::sphere::Sphere {
@@ -60,10 +58,7 @@ fn main() {
         for i in 0..(w - 1) {
             let u = i as f64 / w as f64;
             let v = j as f64 / h as f64;
-            let ray = Ray::new(
-                origin,
-                lower_left_corner + horizontal_size * u + vertical_size * v,
-            );
+            let ray = cam.get_ray(u, v);
 
             let color = color(ray, &objects);
             let y = (h - 1) - j;
