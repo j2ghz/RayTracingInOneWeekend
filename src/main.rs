@@ -9,27 +9,10 @@ use raytracing_in_one_weekend::{
 };
 use std::time::Instant;
 
-fn hit_sphere(center: Vec3d, radius: f64, r: Ray) -> Option<f64> {
-    let oc = r.origin() - center;
-    let a = r.direction().dot(r.direction());
-    let b = oc.dot(r.direction()) * 2.0;
-    let c = oc.dot(oc) - radius * radius;
-    let discriminant = b * b - a * c * 4.0;
-    if discriminant < 0.0 {
-        None
-    } else {
-        Some(-b - discriminant.sqrt() / 2.0 * a)
-    }
-}
-
-fn get_color(r: Ray, hitable: &Vec<Box<dyn Hitable>>) -> Rgb {
-    if let Some(t) = get_hits(hitable, r, 0.0, std::f64::MAX) {
-        let normal = t.normal;
-        Rgb::new(
-            (normal.x() + 1.0) * 0.5,
-            (normal.y() + 1.0) * 0.5,
-            (normal.z() + 1.0) * 0.5,
-        )
+fn get_color(r: Ray, hitables: &Vec<Box<dyn Hitable>>) -> Rgb {
+    if let Some(hit_rec) = get_hits(hitables, r, 0.001, std::f64::MAX) {
+        let target = hit_rec.p + hit_rec.normal + Vec3d::random_in_unit_sphere();
+        get_color(Ray::new(hit_rec.p, target - hit_rec.p), hitables) * 0.5
     } else {
         let unit_direction = r.direction().unit_vector();
         let t = (unit_direction.y() + 1.0) * 0.5;
@@ -39,9 +22,9 @@ fn get_color(r: Ray, hitable: &Vec<Box<dyn Hitable>>) -> Rgb {
 
 fn main() {
     let start = Instant::now();
-    let w = 200;
-    let h = 100;
-    let samples = 100;
+    let w = 2000;
+    let h = 1000;
+    let samples = 1000;
     let mut img: RgbImage = ImageBuffer::new(w, h);
 
     let cam = Camera::default();

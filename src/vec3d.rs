@@ -1,3 +1,4 @@
+use rand::{prelude::ThreadRng, thread_rng, Rng};
 use std::ops::Add;
 
 #[derive(Clone, Copy, Debug)]
@@ -52,6 +53,27 @@ impl Vec3d {
     fn length(self) -> f64 {
         self.length_squared().sqrt()
     }
+    pub fn random() -> Self {
+        let mut r = thread_rng();
+        Self {
+            x: r.gen(),
+            y: r.gen(),
+            z: r.gen(),
+        }
+    }
+    pub fn random_range(min: f64, max: f64) -> Self {
+        Self::random() * (max - min) + min
+    }
+    pub fn random_in_unit_sphere() -> Self {
+        let mut point;
+        loop {
+            point = Self::random_range(-1.0, 1.0);
+            if point.length_squared() < 1.0 {
+                break;
+            }
+        }
+        point
+    }
 }
 
 impl Add for Vec3d {
@@ -61,6 +83,17 @@ impl Add for Vec3d {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
+        }
+    }
+}
+
+impl Add<f64> for Vec3d {
+    type Output = Self;
+    fn add(self, rhs: f64) -> Self::Output {
+        Vec3d {
+            x: self.x + rhs,
+            y: self.y + rhs,
+            z: self.z + rhs,
         }
     }
 }

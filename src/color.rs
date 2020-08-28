@@ -28,7 +28,7 @@ impl Rgb {
 }
 
 fn rescale(float: f64) -> u8 {
-    (float * 255.0).round() as u8
+    (float.sqrt() * 255.0).round() as u8
 }
 
 impl Into<image::Rgb<u8>> for Rgb {
