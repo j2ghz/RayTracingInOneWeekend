@@ -9,7 +9,7 @@ use raytracing_in_one_weekend::{
 };
 use std::time::Instant;
 
-fn get_color(r: Ray, hitables: &Vec<Box<dyn Hitable>>) -> Rgb {
+fn get_color(r: Ray, hitables: &[Box<dyn Hitable>]) -> Rgb {
     if let Some(hit_rec) = get_hits(hitables, r, 0.001, std::f64::MAX) {
         let target = hit_rec.p + hit_rec.normal + Vec3d::random_in_unit_sphere();
         get_color(Ray::new(hit_rec.p, target - hit_rec.p), hitables) * 0.5
