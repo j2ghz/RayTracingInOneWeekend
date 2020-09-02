@@ -1,11 +1,12 @@
 use super::{HitRecord, Hitable};
-use crate::{ray, vec3d::Vec3d};
+use crate::{material::Material, ray, vec3d::Vec3d};
 use ray::Ray;
+use std::rc::Rc;
 
-#[derive(Debug, Clone)]
 pub struct Sphere {
     pub center: Vec3d,
     pub radius: f64,
+    pub material: Rc<dyn Material>,
 }
 impl Hitable for Sphere {
     fn hit(&self, ray: Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
@@ -22,6 +23,7 @@ impl Hitable for Sphere {
                     t: temp,
                     p,
                     normal: (p - self.center) / self.radius,
+                    material: self.material.clone(),
                 });
             }
             let temp = (-b + (b.powi(2) - a * c).sqrt()) / a;
@@ -31,6 +33,7 @@ impl Hitable for Sphere {
                     t: temp,
                     p,
                     normal: (p - self.center) / self.radius,
+                    material: self.material.clone(),
                 });
             }
         }

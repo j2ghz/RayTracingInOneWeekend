@@ -1,10 +1,12 @@
-use crate::{ray::Ray, vec3d::Vec3d};
+use crate::{material::Material, ray::Ray, vec3d::Vec3d};
+use std::rc::Rc;
 pub mod sphere;
 
 pub struct HitRecord {
     pub t: f64,
     pub p: Vec3d,
     pub normal: Vec3d,
+    pub material: Rc<dyn Material>,
 }
 pub trait Hitable {
     fn hit(&self, r: Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;

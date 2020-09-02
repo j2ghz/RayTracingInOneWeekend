@@ -1,3 +1,4 @@
+use crate::vec3d::Vec3d;
 use std::ops::{Add, AddAssign, Div, Mul};
 
 #[derive(Clone, Copy, Debug)]
@@ -70,6 +71,14 @@ impl Mul<f64> for Rgb {
 
     fn mul(self, rhs: f64) -> Self::Output {
         Rgb::new(self.r * rhs, self.g * rhs, self.b * rhs)
+    }
+}
+
+impl Mul<Vec3d> for Rgb {
+    type Output = Rgb;
+
+    fn mul(self, rhs: Vec3d) -> Self::Output {
+        Rgb::new(self.r * rhs.x(), self.g * rhs.y(), self.b * rhs.z())
     }
 }
 
