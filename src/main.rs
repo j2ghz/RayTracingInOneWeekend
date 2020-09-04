@@ -77,7 +77,7 @@ fn main() {
                 let v = (j as f64 + rng.gen::<f64>()) / h as f64;
                 let ray = cam.get_ray(u, v);
 
-                color += get_color(ray, &objects,0);
+                color += get_color(ray, &objects, 0);
             }
             let color = color / samples as f64;
             let y = (h - 1) - j;
