@@ -56,6 +56,7 @@ fn main() {
             radius: 0.5,
             material: Rc::new(Metal {
                 albedo: Vec3d::new(0.8, 0.6, 0.2),
+                fuzz: 1.0,
             }),
         }),
         Box::new(raytracing_in_one_weekend::geometry::sphere::Sphere {
@@ -63,6 +64,7 @@ fn main() {
             radius: 0.5,
             material: Rc::new(Metal {
                 albedo: Vec3d::new(0.8, 0.8, 0.8),
+                fuzz: 0.3,
             }),
         }),
     ];

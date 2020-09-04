@@ -32,11 +32,15 @@ fn reflect(v: Vec3d, n: Vec3d) -> Vec3d {
 #[derive(Clone, Debug)]
 pub struct Metal {
     pub albedo: Vec3d,
+    pub fuzz: f64,
 }
 impl Material for Metal {
     fn scatter(&self, ray: &Ray, hit: &HitRecord) -> Option<Scattered> {
         let reflected = reflect(ray.direction().unit_vector(), hit.normal);
-        let scattered = Ray::new(hit.p, reflected);
+        let scattered = Ray::new(
+            hit.p,
+            reflected + Vec3d::random_in_unit_sphere() * self.fuzz,
+        );
         if scattered.direction().dot(hit.normal) > 0.0 {
             Some(Scattered {
                 ray: scattered,
