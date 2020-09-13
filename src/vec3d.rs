@@ -1,5 +1,5 @@
 use rand::{thread_rng, Rng};
-use std::ops::Add;
+use std::ops::{Add, Neg};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3d {
@@ -50,7 +50,7 @@ impl Vec3d {
     fn length_squared(self) -> f64 {
         self.x.powi(2) + self.y.powi(2) + self.y.powi(2)
     }
-    fn length(self) -> f64 {
+    pub fn length(self) -> f64 {
         self.length_squared().sqrt()
     }
     pub fn random() -> Self {
@@ -188,5 +188,12 @@ impl std::ops::DivAssign<f64> for Vec3d {
         self.x /= f;
         self.y /= f;
         self.z /= f;
+    }
+}
+impl Neg for Vec3d {
+    type Output = Vec3d;
+
+    fn neg(self) -> Self::Output {
+        Vec3d::new(-self.x, -self.y, -self.z)
     }
 }

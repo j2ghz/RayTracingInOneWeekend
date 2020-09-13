@@ -1,3 +1,5 @@
+use rand::{thread_rng, Rng};
+
 use crate::{geometry::HitRecord, ray::Ray, vec3d::Vec3d};
 
 pub struct Scattered {
@@ -49,5 +51,65 @@ impl Material for Metal {
         } else {
             None
         }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Dielectric {
+    pub ref_idx: f64,
+}
+
+impl Material for Dielectric {
+    fn scatter(&self, ray: &Ray, hit: &HitRecord) -> Option<Scattered> {
+        let reflected = reflect(ray.direction(), hit.normal);
+        let attenuation = Vec3d::new(1.0, 1.0, 1.0);
+        let (outward_normal, ni_over_nt, cosine) = if ray.direction().dot(hit.normal) > 0.0 {
+            (
+                -hit.normal,
+                self.ref_idx,
+                self.ref_idx * ray.direction().dot(hit.normal) / ray.direction().length(),
+            )
+        } else {
+            (
+                hit.normal,
+                1.0 / &self.ref_idx,
+                -ray.direction().dot(hit.normal) / ray.direction().length(),
+            )
+        };
+
+        Some(Scattered {
+            attenuation,
+            ray: Ray::new(
+                hit.p,
+                if let Some(refracted) = refract(ray.direction(), outward_normal, ni_over_nt) {
+                    let reflection_probability = schlick(cosine, self.ref_idx);
+                    if reflection_probability < thread_rng().gen() {
+                        reflected
+                    } else {
+                        refracted
+                    }
+                } else {
+                    reflected
+                },
+            ),
+        })
+    }
+}
+
+pub fn schlick(cosine: f64, ref_idx: f64) -> f64 {
+    let r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+    let r0 = r0.powi(2);
+    r0 + (1.0 - r0) * (1.0 - cosine).powi(5)
+}
+
+fn refract(v: Vec3d, normal: Vec3d, ni_over_nt: f64) -> Option<Vec3d> {
+    let uv = v.unit_vector();
+    let dt = uv.dot(normal);
+    let discriminant = 1.0 - ni_over_nt.powi(2) * (1.0 - dt.powi(2));
+    if discriminant > 0.0 {
+        let refracted = (uv - normal * dt) * ni_over_nt - normal * discriminant.sqrt();
+        Some(refracted)
+    } else {
+        None
     }
 }

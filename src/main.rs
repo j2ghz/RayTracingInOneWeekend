@@ -4,6 +4,7 @@ use raytracing_in_one_weekend::{
     camera::Camera,
     color::Rgb,
     geometry::{get_hits, Hitable},
+    material::Dielectric,
     material::{Lambertian, Metal},
     ray::Ray,
     vec3d::Vec3d,
@@ -29,9 +30,9 @@ fn get_color(r: Ray, hitables: &[Box<dyn Hitable>], depth: usize) -> Rgb {
 
 fn main() {
     let start = Instant::now();
-    let w = 200;
-    let h = 100;
-    let samples = 1000;
+    let w = 2000;
+    let h = 1000;
+    let samples = 20;
     let mut img: RgbImage = ImageBuffer::new(w, h);
 
     let cam = Camera::default();
@@ -41,7 +42,7 @@ fn main() {
             center: Vec3d::new(0.0, 0.0, -1.0),
             radius: 0.5,
             material: Rc::new(Lambertian {
-                albedo: Vec3d::new(0.8, 0.3, 0.3),
+                albedo: Vec3d::new(0.1, 0.2, 0.5),
             }),
         }),
         Box::new(raytracing_in_one_weekend::geometry::sphere::Sphere {
@@ -62,10 +63,7 @@ fn main() {
         Box::new(raytracing_in_one_weekend::geometry::sphere::Sphere {
             center: Vec3d::new(-1.0, 0.0, -1.0),
             radius: 0.5,
-            material: Rc::new(Metal {
-                albedo: Vec3d::new(0.8, 0.8, 0.8),
-                fuzz: 0.3,
-            }),
+            material: Rc::new(Dielectric { ref_idx: 1.5 }),
         }),
     ];
     let mut rng = rand::thread_rng();
