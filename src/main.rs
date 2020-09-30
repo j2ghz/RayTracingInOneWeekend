@@ -32,7 +32,7 @@ fn main() {
     let start = Instant::now();
     let w = 2000;
     let h = 1000;
-    let samples = 20;
+    let samples = 200;
     let mut img: RgbImage = ImageBuffer::new(w, h);
 
     let cam = Camera::default();
@@ -68,6 +68,7 @@ fn main() {
     ];
     let mut rng = rand::thread_rng();
     for j in (0..(h - 1)).rev() {
+        println!("{}",j);
         for i in 0..(w - 1) {
             let mut color = Rgb::new(0.0, 0.0, 0.0);
             for _ in 0..samples {
