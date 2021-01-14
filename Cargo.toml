@@ -12,7 +12,7 @@ codegen-units = 1
 
 [dependencies]
 image = "0.23"
-rand = "0.7"
+rand = "0.8"
 
 [dev-dependencies]
 criterion = "0.3"
